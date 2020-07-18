@@ -5,16 +5,13 @@ import MaleImage from './male.png';
 
 import FemaleImage from './female.png';
 
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { Grid, Button, Message } from 'semantic-ui-react';
 class HomePage extends React.Component {
   state = {
     want: '',
     current: '',
-    username: '',
-    email: '',
-    password: '',
-    passwordConfirmation: '',
+    success: false,
     errors: [],
     loading: false,
   };
@@ -37,7 +34,7 @@ class HomePage extends React.Component {
   };
 
   onRadioChange = (e) => {
-    console.log(e.target.value);
+    // console.log(e.target.value);
     this.setState({
       [e.target.name]: e.target.value,
     });
@@ -50,16 +47,6 @@ class HomePage extends React.Component {
     return !want.length;
   };
 
-  isPasswordValid = ({ password, passwordConfirmation }) => {
-    if (password.length < 6 || passwordConfirmation.length < 6) {
-      return false;
-    } else if (password !== passwordConfirmation) {
-      return false;
-    } else {
-      return true;
-    }
-  };
-
   displayErrors = (errors) =>
     errors.map((error, i) => <p key={i}>{error.message}</p>);
 
@@ -70,11 +57,17 @@ class HomePage extends React.Component {
   handleSubmit = (event) => {
     event.preventDefault();
     if (this.isFormValid()) {
+      this.state.success = true;
+      console.log(this.state.success);
       this.setState({ errors: [], loading: true });
     }
   };
 
   render() {
+    var details = {
+      wantGender: this.state.want,
+      currentGender: this.state.current,
+    };
     const { errors, loading } = this.state;
 
     return (
@@ -164,6 +157,23 @@ class HomePage extends React.Component {
               {this.displayErrors(errors)}
             </Message>
           )}
+          <p>
+            {(() => {
+              if (this.state.success === true) {
+                return (
+                  <Redirect
+                    to={{
+                      pathname: '/chat',
+                      state: {
+                        wantG: this.state.want,
+                        currentG: this.state.current,
+                      },
+                    }}
+                  />
+                );
+              }
+            })()}
+          </p>
         </Grid.Column>
       </Grid>
     );
