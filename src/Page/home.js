@@ -1,117 +1,173 @@
-import React, { Component } from 'react';
+import React from 'react';
 import Header from '../Components/header';
 import './home.css';
 import MaleImage from './male.png';
+
 import FemaleImage from './female.png';
-import { Button, Toast } from 'react-bootstrap';
-import { toast } from 'react-toastify';
 
-export default class HomePage extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      want: null,
-      current: null,
-    };
-    this.onRadioChange = this.onRadioChange.bind(this);
-    this.checkValue = this.checkValue.bind(this);
-  }
+import { Link } from 'react-router-dom';
+import { Grid, Button, Message } from 'semantic-ui-react';
+class HomePage extends React.Component {
+  state = {
+    want: '',
+    current: '',
+    username: '',
+    email: '',
+    password: '',
+    passwordConfirmation: '',
+    errors: [],
+    loading: false,
+  };
 
-  onRadioChange(e) {
+  isFormValid = () => {
+    let errors = [];
+    let error;
+
+    if (this.currentEmpty(this.state)) {
+      error = { message: 'Select Your Gender' };
+      this.setState({ errors: errors.concat(error) });
+      return false;
+    } else if (this.wantEmpty(this.state)) {
+      error = { message: 'Select The Gender You Want To Chat With' };
+      this.setState({ errors: errors.concat(error) });
+      return false;
+    } else {
+      return true;
+    }
+  };
+
+  onRadioChange = (e) => {
     console.log(e.target.value);
     this.setState({
       [e.target.name]: e.target.value,
     });
-  }
-  checkValue() {
-    let currentUser = this.state.current;
-    let wantUser = this.state.want;
+  };
 
-    if (currentUser === null) {
-      console.log('He');
-    } else if (wantUser === null) {
-      console.log('Hi');
+  currentEmpty = ({ current }) => {
+    return !current.length;
+  };
+  wantEmpty = ({ want }) => {
+    return !want.length;
+  };
+
+  isPasswordValid = ({ password, passwordConfirmation }) => {
+    if (password.length < 6 || passwordConfirmation.length < 6) {
+      return false;
+    } else if (password !== passwordConfirmation) {
+      return false;
+    } else {
+      return true;
     }
-  }
+  };
+
+  displayErrors = (errors) =>
+    errors.map((error, i) => <p key={i}>{error.message}</p>);
+
+  handleChange = (event) => {
+    this.setState({ [event.target.name]: event.target.value });
+  };
+
+  handleSubmit = (event) => {
+    event.preventDefault();
+    if (this.isFormValid()) {
+      this.setState({ errors: [], loading: true });
+    }
+  };
+
   render() {
+    const { errors, loading } = this.state;
+
     return (
-      <div>
-        <Header />
-        <h2>Your Gender</h2>
-        <div>
-          <input
-            type="radio"
-            id="selectMale"
-            name="current"
-            checked={this.state.current === 'selectMale'}
-            onChange={this.onRadioChange}
-            value="selectMale"
-          />
-          <label for="selectMale">
-            <center>
-              <h5>Male</h5>
-            </center>
-            <br></br>
-            <img height="100" width="100" alt="" src={MaleImage} />
-          </label>
-          <input
-            type="radio"
-            id="selectFemale"
-            onChange={this.onRadioChange}
-            checked={this.state.current === 'selectFemale'}
-            name="current"
-            value="selectFemale"
-          />
-          <label for="selectFemale">
-            <center>
-              <h5>Female</h5>
-            </center>
-            <br></br>
-            <img height="100" width="100" alt="" src={FemaleImage} />
-          </label>
-        </div>
-        <h2>Want To Chat With</h2>
-        <div>
-          <input
-            type="radio"
-            id="wantFemale"
-            onChange={this.onRadioChange}
-            checked={this.state.want === 'wantFemale'}
-            value="wantFemale"
-            name="want"
-          />
-          <label for="wantFemale">
-            <center>
-              <h5>Female</h5>
-            </center>
-            <br></br>
-            <img height="100" width="100" alt="" src={FemaleImage} />
-          </label>
-          <input
-            type="radio"
-            id="wantMale"
-            value="wantMale"
-            onChange={this.onRadioChange}
-            checked={this.state.want === 'wantMale'}
-            name="want"
-          />
-          <label for="wantMale">
-            <center>
-              <h5>Male</h5>
-            </center>
-            <br></br>
-            <img height="100" width="100" alt="" src={MaleImage} />
-          </label>
-        </div>
-        <Button
-          variant="outline-primary"
-          type="button"
-          size="lg"
-          onClick={this.checkValue}
-        >
-          Chat Now
-        </Button>{' '}
-      </div>
+      <Grid textAlign="center" verticalAlign="middle" className="app">
+        <Grid.Column style={{ maxWidth: 450 }}>
+          <Header />
+          <h2>Your Gender</h2>
+          <div>
+            <input
+              type="radio"
+              id="selectMale"
+              name="current"
+              checked={this.state.current === 'selectMale'}
+              onChange={this.onRadioChange}
+              value="selectMale"
+            />
+            <label for="selectMale">
+              <center>
+                <h5>Male</h5>
+              </center>
+              <br></br>
+              <img height="100" width="100" alt="" src={MaleImage} />
+            </label>
+            <input
+              type="radio"
+              id="selectFemale"
+              onChange={this.onRadioChange}
+              checked={this.state.current === 'selectFemale'}
+              name="current"
+              value="selectFemale"
+            />
+            <label for="selectFemale">
+              <center>
+                <h5>Female</h5>
+              </center>
+              <br></br>
+              <img height="100" width="100" alt="" src={FemaleImage} />
+            </label>
+          </div>
+          <h2>Want To Chat With</h2>
+          <div>
+            <input
+              type="radio"
+              id="wantFemale"
+              onChange={this.onRadioChange}
+              checked={this.state.want === 'wantFemale'}
+              value="wantFemale"
+              name="want"
+            />
+            <label for="wantFemale">
+              <center>
+                <h5>Female</h5>
+              </center>
+              <br></br>
+              <img height="100" width="100" alt="" src={FemaleImage} />
+            </label>
+            <input
+              type="radio"
+              id="wantMale"
+              value="wantMale"
+              onChange={this.onRadioChange}
+              checked={this.state.want === 'wantMale'}
+              name="want"
+            />
+            <label for="wantMale">
+              <center>
+                <h5>Male</h5>
+              </center>
+              <br></br>
+              <img height="100" width="100" alt="" src={MaleImage} />
+            </label>
+          </div>
+
+          <Button
+            onClick={this.handleSubmit}
+            disabled={loading}
+            className={loading ? 'loading' : ''}
+            color="pink"
+            inverted
+            size="huge"
+          >
+            Submit
+          </Button>
+          {errors.length > 0 && (
+            <Message error>
+              <h3>Error</h3>
+              {this.displayErrors(errors)}
+            </Message>
+          )}
+        </Grid.Column>
+      </Grid>
     );
   }
 }
+
+export default HomePage;
