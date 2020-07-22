@@ -5,7 +5,7 @@ import MaleImage from './male.png';
 
 import FemaleImage from './female.png';
 
-import { Link, Redirect } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import { Grid, Button, Message } from 'semantic-ui-react';
 class HomePage extends React.Component {
   state = {
@@ -34,7 +34,6 @@ class HomePage extends React.Component {
   };
 
   onRadioChange = (e) => {
-    // console.log(e.target.value);
     this.setState({
       [e.target.name]: e.target.value,
     });
@@ -64,10 +63,6 @@ class HomePage extends React.Component {
   };
 
   render() {
-    var details = {
-      wantGender: this.state.want,
-      currentGender: this.state.current,
-    };
     const { errors, loading } = this.state;
 
     return (
@@ -78,13 +73,13 @@ class HomePage extends React.Component {
           <div>
             <input
               type="radio"
-              id="selectMale"
+              id="currentMale"
               name="current"
-              checked={this.state.current === 'selectMale'}
+              checked={this.state.current === 'currentMale'}
               onChange={this.onRadioChange}
-              value="selectMale"
+              value="currentMale"
             />
-            <label for="selectMale">
+            <label for="currentMale">
               <center>
                 <h5>Male</h5>
               </center>
@@ -93,13 +88,13 @@ class HomePage extends React.Component {
             </label>
             <input
               type="radio"
-              id="selectFemale"
+              id="currentFemale"
               onChange={this.onRadioChange}
-              checked={this.state.current === 'selectFemale'}
+              checked={this.state.current === 'currentFemale'}
               name="current"
-              value="selectFemale"
+              value="currentFemale"
             />
-            <label for="selectFemale">
+            <label for="currentFemale">
               <center>
                 <h5>Female</h5>
               </center>
